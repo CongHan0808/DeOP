@@ -1,0 +1,31 @@
+_BASE_: zero_shot_maskformer_R50_bs32_60k.yaml
+MODEL:
+  META_ARCHITECTURE: "ZeroShotMaskFormerDecoderGtMask"
+  BACKBONE:
+    NAME: "build_resnet_deeplab_backbone"
+  #WEIGHTS: "detectron2://DeepLab/R-103.pkl"
+  WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/weights/maskfomer/R-103.pkl"
+  #WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/prompt/output/R101c_learned_prompt_bs32_60k_Noid-1/model_final.pth"
+  #WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/prompt/output/R101c_single_prompt_bs32_60k/model_final_learned.pth"
+  RESNETS:
+    DEPTH: 101
+    STEM_TYPE: "deeplab"
+    STEM_OUT_CHANNELS: 128
+    STRIDE_IN_1X1: False
+    OUT_FEATURES: ["res2", "res3", "res4", "res5"]
+    # NORM: "SyncBN"
+    RES5_MULTI_GRID: [1, 2, 4]
+  CLIP_ADAPTER:
+    CLIP_ENSEMBLE: True
+    CLIP_ENSEMBLE_WEIGHT: 0.8
+  
+OUTPUT_DIR: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/prompt/output0817/R101c_learned_prompt_bs32_60k_newdata"
+DATASETS:
+  #TRAIN: ("coco_2017_train_stuff_base_sem_seg",)
+  TEST: ("coco_2017_test_stuff_base_sem_seg", "coco_2017_test_stuff_novel_sem_seg", "coco_2017_test_stuff_sem_seg")
+  TEST: ("coco_2017_test_stuff_sem_seg",)
+SOLVER:
+  IMS_PER_BATCH: 32
+  TEST_IMS_PER_BATCH: 8
+TEST:
+  EVAL_PERIOD: 5000

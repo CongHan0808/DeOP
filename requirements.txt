@@ -1,0 +1,11 @@
+tensorboard
+yacs>=0.1.8
+cython
+scipy
+shapely
+timm
+h5py
+wandb
+fire
+mmcv
+#detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu102/torch1.8/index.html
