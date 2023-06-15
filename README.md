@@ -111,6 +111,7 @@ We replace MaskFormer with SAM as the mask proposal network.
 </details>
 
 ### run demo
+  The demo is almost training-free, we only train the learnable text prompt. You can download the weights from [text prompt](https://drive.google.com/file/d/1b6kzLks12ONQPT6wVJsM8ZLrd_GB0br8/view?usp=drive_link)
   ```
   python3 demo.py --input dataset/test/000000000285.jpg --output ./output
   ```

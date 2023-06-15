@@ -4,10 +4,8 @@ MODEL:
   BACKBONE:
     NAME: "build_resnet_deeplab_backbone"
   
-  #WEIGHTS: "detectron2://DeepLab/R-103.pkl"
-  WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/weights/maskfomer/R-103.pkl"
-  #WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/prompt/output/R101c_learned_prompt_bs32_60k_Noid-1/model_final.pth"
-  #WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/prompt/output/R101c_single_prompt_bs32_60k/model_final_learned.pth"
+  WEIGHTS: "detectron2://DeepLab/R-103.pkl"
+  # WEIGHTS: "weights/maskfomer/R-103.pkl"
   RESNETS:
     DEPTH: 101
     STEM_TYPE: "deeplab"
@@ -20,12 +18,11 @@ MODEL:
     CLIP_ENSEMBLE: True
     CLIP_ENSEMBLE_WEIGHT: 0.8
     # PROMPT_LEARNER: "predefined"
-    PROMPT_CHECKPOINT: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/output/promptproposal/learnprompt_bs32_10k_4/model_final.pth"
+    PROMPT_CHECKPOINT: "promptproposal/learnprompt_bs32_10k_4/model_clip_learnprompt.pth"
   MASK_FORMER:
     SAM_POINTS_PER_SIDE: 20
-OUTPUT_DIR: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/prompt/output0817/R101c_learned_prompt_bs32_60k_newdata"
+OUTPUT_DIR: "prompt/output0817/R101c_learned_prompt_bs32_60k_newdata"
 DATASETS:
-  #TRAIN: ("coco_2017_train_stuff_base_sem_seg",)
   TEST: ("coco_2017_test_stuff_base_sem_seg", "coco_2017_test_stuff_novel_sem_seg", "coco_2017_test_stuff_sem_seg")
   TEST: ("coco_2017_test_stuff_sem_seg",)
   TEST: ("coco_2017_test_stuff_sem_seg_head200",)
@@ -35,5 +32,5 @@ SOLVER:
 TEST:
   EVAL_PERIOD: 5000
 
-  # MODEL.MASK_FORMER.SAM_POINTS_PER_SIDE = 16
+# MODEL.MASK_FORMER.SAM_POINTS_PER_SIDE = 16
 
