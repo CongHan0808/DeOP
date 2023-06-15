@@ -37,25 +37,25 @@ We replace MaskFormer with SAM as the mask proposal network.
 ```
 
 ## Guideline
-### Setup enviroment
+### Setup environment
 <details>
-  <summary> Enviroment </summary>
-     ```bash
-     conda create --name deop python=3.7
-     conda activate deop
-     conda install pytorch==1.8.0 torchvision==0.9.0 torchaudio==0.8.0 -c pytorch
-     pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu102/torch1.8/index.html
-     pip install mmcv==1.3.14
-     ```
-     FurtherMore, install the modified clip package.
-     ```bash
-     cd third_party/CLIP
-     python -m pip install -Ue .
+  <summary> Environment </summary>
+  
+  ```bash
+  conda create --name deop python=3.7
+  conda activate deop
+  conda install pytorch==1.8.0 torchvision==0.9.0 torchaudio==0.8.0 -c pytorch
+  pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu102/torch1.8/index.html
+  pip install mmcv==1.3.14
+  
+  #FurtherMore, install the modified clip package.
+  cd third_party/CLIP
+  python -m pip install -Ue .
 
-     # install SAM
-     git clone git@github.com:facebookresearch/segment-anything.git
-     cd segment-anything; pip install -e .
-     ```
+  # install SAM
+  git clone git@github.com:facebookresearch/segment-anything.git
+  cd segment-anything; pip install -e .
+  ```
 </details>
 
 ### Data Preparation
