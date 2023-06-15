@@ -21,6 +21,7 @@
 
 
 This repo is for our paper [Zero-Shot Semantic Segmentation with Decoupled One-Pass Network](https://arxiv.org/pdf/2304.01198.pdf). It is based on the official repo of [SimBaseline](https://github.com/MendelXu/zsseg.baseline).
+We replace MaskFormer with SAM as the mask proposal network.
 
 ![](resources/deop.png)
 <!-- <iframe src="resources/framework6.pdf" width="500" height="375"></iframe> -->
