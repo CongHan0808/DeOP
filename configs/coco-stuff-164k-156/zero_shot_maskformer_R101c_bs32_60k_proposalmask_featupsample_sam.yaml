@@ -4,8 +4,8 @@ MODEL:
   BACKBONE:
     NAME: "build_resnet_deeplab_backbone"
   
-  WEIGHTS: "detectron2://DeepLab/R-103.pkl"
-  # WEIGHTS: "weights/maskfomer/R-103.pkl"
+  # WEIGHTS: "detectron2://DeepLab/R-103.pkl"
+  WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/weights/maskfomer/R-103.pkl"
   RESNETS:
     DEPTH: 101
     STEM_TYPE: "deeplab"
@@ -18,7 +18,7 @@ MODEL:
     CLIP_ENSEMBLE: True
     CLIP_ENSEMBLE_WEIGHT: 0.8
     # PROMPT_LEARNER: "predefined"
-    PROMPT_CHECKPOINT: "promptproposal/learnprompt_bs32_10k_4/model_clip_learnprompt.pth"
+    PROMPT_CHECKPOINT: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/output/promptproposal/learnprompt_bs32_10k_4/model_final.pth"
   MASK_FORMER:
     SAM_POINTS_PER_SIDE: 20
 OUTPUT_DIR: "prompt/output0817/R101c_learned_prompt_bs32_60k_newdata"
