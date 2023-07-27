@@ -130,8 +130,6 @@ def load(
     preprocess : Callable[[PIL.Image], torch.Tensor]
         A torchvision transform that converts a PIL image into a tensor that the returned model can take as its input
     """
-    print("load clip model ", name)
-    # import pdb; pdb.set_trace()
     if name in _MODELS:
         model_path = _download(_MODELS[name])
     elif os.path.isfile(name):
@@ -140,13 +138,11 @@ def load(
         raise RuntimeError(
             f"Model {name} not found; available models = {available_models()}"
         )
-    # print("load clip model, from path: ", model_path)
     try:
         # loading JIT archive
         model = torch.jit.load(model_path, map_location=device if jit else "cpu").eval()
         state_dict = None
         
-        # print(model)
     except RuntimeError:
         # loading saved state dict
         if jit:

@@ -392,6 +392,7 @@ class ResidualAttentionBlockVitNoattn(nn.Module):
     def __init__(self, d_model: int, n_head: int, attn_mask: torch.Tensor = None, outlayer = False):
         super().__init__()
 
+        # self.attn = nn.MultiheadAttention(d_model, n_head)
         if outlayer:
             self.attn = MultiheadAttentionVitNoattn(d_model, n_head)
         else:
@@ -500,6 +501,7 @@ class ResidualAttentionBlockVitPosition(nn.Module):
         maskselfattn = False, layerVit = -1):
         super().__init__()
 
+        # self.attn = nn.MultiheadAttention(d_model, n_head)
         self.layerVit = -1
         if outlayer:
             self.attn = MultiheadAttentionVit(d_model, n_head, maskselfattn=maskselfattn, layerVit= layerVit)
@@ -518,6 +520,7 @@ class ResidualAttentionBlockVitPosition(nn.Module):
         )
         self.ln_2 = LayerNorm(d_model)
         self.attn_mask = attn_mask
+
 
         ########################################################################################
         # 第一层已经在最外面的transformer中添加了  目前vit中共有12层transformer
@@ -591,12 +594,14 @@ class ResidualAttentionBlockVitPosition(nn.Module):
                 
                 learned_positional_embedding = torch.cat([cls_pos, per_pos_embedding])
             x = (x.permute(1,0,2)+ learned_positional_embedding).permute(1,0,2)
-        # if self.layerVit== 11 and ((ps_shortcut-1.0)> 0.001 or (1-ps_shortcut) > 0.001):
+
+
+        
+            
+        # if self.layerVit== 11:
         #     alphaShortcut = ps_shortcut
         #     x = alphaShortcut * x + self.attention(self.ln_1(x), **kwargs)
         # else:
-        #     x = x + self.attention(self.ln_1(x), **kwargs)
-
         x = x + self.attention(self.ln_1(x), **kwargs)
         
         x = x + self.mlp(self.ln_2(x))
@@ -614,13 +619,26 @@ class TransformerVit(nn.Module):
         tmp = []
         for num_layer in range(self.layers):
             if num_layer in layermaskvit:
+                # if num_layer == 11:
+                #     tmp.append(ResidualAttentionBlockVitNoattn(width, heads, attn_mask, outlayer = True))
+                # else:
+                #     tmp.append(ResidualAttentionBlockVit(width, heads, attn_mask, outlayer = True))
                 tmp.append(ResidualAttentionBlockVit(width, heads, attn_mask, outlayer = True, \
                 maskselfattn = maskselfattn, layerVit = num_layer))
             else:
                 tmp.append(ResidualAttentionBlockVit(width, heads, attn_mask))
+        # num = layers-self.layermaskvit
+        # tmp = [ResidualAttentionBlockVit(width, heads, attn_mask) for _ in range(layers-num)]
+        # if num >0:
+        #     tmp += [ResidualAttentionBlockVit(width, heads, attn_mask, outlayer = True)]
+        #     if num > 1:
+        #         tmp += [ResidualAttentionBlockVit(width, heads, attn_mask, outlayer = True) for _ in range(layers-num+1,layers)]
         self.resblocks= nn.Sequential(
             *tmp
         )
+        # self.resblocks = nn.Sequential(
+        #     *[ResidualAttentionBlockVit(width, heads, attn_mask) for _ in range(layers)]
+        # )
 
     def forward(self, x: torch.Tensor, **kwargs):
         layerNum = 0
@@ -1886,7 +1904,7 @@ class MultiheadAttentionVit(nn.Module):
                 need_weights: bool = True, attn_mask: Optional[Tensor] = None, \
                 mask_feature : Optional[Tensor] = None, maskselfattnsoftmax = False,\
                 vitL = False) -> Tuple[Tensor, Optional[Tensor]]:
-        # import pdb; pdb.set_trace()
+        import pdb; pdb.set_trace()
         if self.maskselfattn and not maskselfattnsoftmax:
             
             return multi_head_attention_forward_vit_softmax_noattn_maskselfattn_addselfattn(        
@@ -2883,13 +2901,98 @@ def multi_head_attention_forward_vit_softmax_noattn_delall(
 
     head_dim = embed_dim // num_heads
     assert head_dim * num_heads == embed_dim, "embed_dim must be divisible by num_heads"
+    scaling = float(head_dim) ** -0.5
+    if not use_separate_proj_weight:
+        if (query is key or torch.equal(query, key)) and (key is value or torch.equal(key, value)):
+            # self-attention
+            q, k, v = linear(query, in_proj_weight, in_proj_bias).chunk(3, dim=-1)
+    q = q * scaling
+
+    q = q.contiguous().view(tgt_len, bsz * num_heads, head_dim).transpose(0, 1)
+    if k is not None:
+        k = k.contiguous().view(-1, bsz * num_heads, head_dim).transpose(0, 1)
     if v is not None:
         v = v.contiguous().view(-1, bsz * num_heads, head_dim).transpose(0, 1)
     src_len = k.size(1)
     
-    len_tokens=0
+    #####################################################################################################################
+    # 处理mask feature的尺寸
+    BSZ, Mbs, Mh, Mw = mask_feature.shape
+    # down_ratio = np.sqrt(Mh*Mw/(tgt_len-1))
+
+    Mh_new = int(Mh//4)
+    Mw_new = int(Mw//4)
+    mask_feature = F.interpolate(mask_feature, size=(Mh_new, Mw_new), mode="bilinear")
+    mask_feature = mask_feature.to(torch.float32)
+
     
+
+    # new_mask_feature = torch.ones_like(mask_feature, dtype = k.dtype)
+    # new_mask_feature.masked_fill_(mask_feature<0, float("-inf"))    
+    # mask_feature = new_mask_feature
+
+
+    mask_flatten =mask_feature.reshape(bsz, -1, Mh_new*Mw_new)
+    mask_flatten_repeat = mask_flatten.repeat(num_heads, 1,1)
+    
+    mask_list = []
+    for i in range(bsz):
+        mask_ = mask_flatten_repeat[i::bsz, :,:]
+        mask_list.append(mask_)
+    
+    mask_new = torch.stack(mask_list)
+    
+    mask_new = mask_new.view(bsz*num_heads,100,-1)
+
+    mask_new = mask_new.sigmoid()
+    # mask_new = softmax(mask_new, dim = -1)
+    tmp = torch.ones(bsz*num_heads,100,1).to(mask_new)
+    mask_new =torch.cat((tmp, mask_new), dim = 2)
+    
+    # mask_new_softmax = softmax(mask_new, dim = -1)
+    # import pdb; pdb.set_trace()
+    mask_new_softmax = mask_new
+    ####################################################################################
+    # attn_output_weights = torch.bmm(q, k.transpose(-2,-1))
+    # attn_output_weights = softmax(attn_output_weights, dim=-1)
+    # attn_output_weights = dropout(attn_output_weights, p = dropout_p)
+    # return attn_output_weights, None
+    # attn_output_weights = attn_output_weights.sigmoid()
+
+    # import pdb; pdb.set_trace()
+    # attn_output_weights_mask = torch.einsum("qld, qnd->qnld", attn_output_weights, mask_new_softmax)
+    
+    # attn_output_weights_mask = attn_output_weights
+    ####################################################################################
+    attn_output_weights_mask = mask_new_softmax
+    # import pdb; pdb.set_trace()
+    if attn_output_weights_mask.isnan().any():
+        print("attn_output_weights_mask is nan")
+        # import pdb; pdb.set_trace()
+    if v.isnan().any():
+        print("v is nan")
+        # import pdb; pdb.set_trace()
+    len_tokens=0
+    # import pdb; pdb.set_trace()
+    if learn_token and attn_output_weights_mask.shape[-1] != v.shape[1]:
+        len_tokens = v.shape[1] - attn_output_weights_mask.shape[-1]
+        v = torch.cat((
+            v[:,:1,:],
+            v[:,1+len_tokens:,:]
+        ),dim = 1)
+        # import pdb; pdb.set_trace()
+        # v = torch.cat()
+    # attn_output = torch.einsum("qnl, qlc->qnlc", attn_output_weights_mask, v)
+    # if attn_output.isnan().any():
+    #     print("attn_output is nan")
+    #     # import pdb; pdb.set_trace()
+    # attn_output = attn_output.sum(dim = 1)
     attn_output = v
+    
+
+    # attn_output = torch.einsum("qld, qdc->qlc", attn_output_weights_mask, v)
+
+
     assert list(attn_output.size()) == [bsz * num_heads, tgt_len-len_tokens, head_dim]
     # import pdb; pdb.set_trace()
     attn_output = attn_output.transpose(0, 1).contiguous().view(tgt_len-len_tokens, bsz, embed_dim)

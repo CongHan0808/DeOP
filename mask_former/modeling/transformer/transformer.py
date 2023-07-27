@@ -450,7 +450,7 @@ class TransformerDecoderLinear(nn.Module):
 
         if self.return_intermediate:
             return torch.stack(intermediate)
-
+        
         return outputl.unsqueeze(0)
 
 # decoder去除linear部分和TransformerDecoderLayerLinear配合使用, 参照Fusioner，在transformer层增加和text的融合
@@ -809,6 +809,7 @@ class TransformerDecoderOutLayerLinear(nn.Module):
         #     attn_mask=memory_mask,
         #     key_padding_mask=memory_key_padding_mask,
         # )[0]
+        
         if need_weights:
             tgt2= self.multihead_attn_my(
                 query=self.with_pos_embed(tgt, query_pos),
@@ -828,13 +829,15 @@ class TransformerDecoderOutLayerLinear(nn.Module):
                 key_padding_mask=memory_key_padding_mask,
                 proposal_mask = proposal_mask,
             )[0]
-        
+
         # self.non_object_embedding.norm(dim=-1, keepdim=True)
+        
         if (tgt2.norm(p=2,dim =-1, keepdim=True)==0).any():
             tgt = tgt2/ (tgt2.norm(p=2,dim=-1, keepdim=True) + 1e-10)
             pass
         else:
             tgt = tgt2/ tgt2.norm(p=2,dim=-1, keepdim=True)
+
         if torch.isinf(tgt).any():
             print("tgt is inf line649")
             import pdb; pdb.set_trace()
@@ -891,6 +894,7 @@ class MultiHeadAttentionMy(nn.Module):
 
         self.num_heads = num_heads
         self.dropout_p = dropout
+        self.dropout_F = nn.Dropout(self.dropout_p)
         self.batch_first = batch_first
         self.head_dim = embed_dim // num_heads
 
@@ -1038,6 +1042,7 @@ class MultiHeadAttentionMy(nn.Module):
 
         attn_output_weights = torch.bmm(q, k.transpose(1, 2))
 
+
         # proposal mask 处理
         mask_shape = proposal_mask.shape
         proposal_mask = proposal_mask.view(mask_shape[0], mask_shape[1],-1)
@@ -1051,25 +1056,15 @@ class MultiHeadAttentionMy(nn.Module):
         mask_nhead = mask_list_stack.view(mask_stack_shape[0] * mask_stack_shape[1], \
             mask_stack_shape[2], mask_stack_shape[3])
 
+
         attn_output_weights = F.softmax(attn_output_weights, dim=-1)
-        attn_output_weights = F.dropout(attn_output_weights, p=self.dropout_p, training=training)
+        # attn_output_weights = F.dropout(attn_output_weights, p=self.dropout_p, training=False)
+        attn_output_weights = self.dropout_F(attn_output_weights)
         
         # soft(k*v^T/sqrt(d))后添加mask
         attn_output_weights = attn_output_weights * mask_nhead
-        # import pdb; pdb.set_trace()
-        is_inf_attn = torch.isinf(attn_output_weights).any()
-        if is_inf_attn:
-            import pdb; pdb.set_trace()
-            print("attn_output_weight line861 is inf")
-            pass
 
         attn_output = torch.bmm(attn_output_weights, v)
-
-        is_inf_output = torch.isinf(attn_output).any()
-        if is_inf_output:
-            import pdb; pdb.set_trace()
-            print("attn_output line869 is inf")
-            pass
 
         attn_output = attn_output.transpose(0, 1).contiguous().view(tgt_len, bsz, embed_dim)
         # import pdb; pdb.set_trace()

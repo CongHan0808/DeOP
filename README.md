@@ -30,7 +30,7 @@ We replace MaskFormer with SAM as the mask proposal network.
 @article{Han2023ZeroShotSS,
   title={Zero-Shot Semantic Segmentation with Decoupled One-Pass Network},
   author={Cong Han and Yujie Zhong and Dengjie Li and Kai Han and Lin Ma},
-  journal={ArXiv},
+  journal={ICCV},
   year={2023},
   volume={abs/2304.01198}
 }
@@ -52,9 +52,6 @@ We replace MaskFormer with SAM as the mask proposal network.
   cd third_party/CLIP
   python -m pip install -Ue .
 
-  # install SAM
-  git clone git@github.com:facebookresearch/segment-anything.git
-  cd segment-anything; pip install -e .
   ```
 </details>
 
@@ -110,7 +107,13 @@ We replace MaskFormer with SAM as the mask proposal network.
 
 </details>
 
-### run demo
+Results on COCO-Stuff and Pascal VOC in the open-vocabulary setting.
+### Results 
+<a name="resdataset"></a>
+![](resources/results-intradataset.jpg)
+Results on Pascal VOC, Pascal Context and ADE20K in the cross-dataset setting
+![](resources/results-crossdataset.jpg)
+### Run demo
   The demo is almost training-free, we only train the learnable text prompt. You can download the weights from [text prompt](https://drive.google.com/file/d/1b6kzLks12ONQPT6wVJsM8ZLrd_GB0br8/view?usp=drive_link) which is trained on COCO-Stuff-156 dataset.
   ```
   python3 demo.py --input dataset/test/000000000285.jpg --output ./output
@@ -120,3 +123,17 @@ We replace MaskFormer with SAM as the mask proposal network.
   python3 demo.py --input dataset/test/000000000285.jpg --output ./output --class-names bear other
   ```
 
+### Evaluation
+We release the weights of DeOP in [model weight](https://drive.google.com/file/d/1TN1krQWPxbDFtpTFlEpGOf40FRByKwf4/view?usp=drive_link). The results are shown on [Results](#resdataset).
+```
+sh deop_verifycoco.sh
+```
+### Train
+```
+# 1.Train a learnable text prompt model.
+
+# 2. Train a MaskFormer model.
+
+# 3. Train DeOP.
+sh deop_train.sh
+```

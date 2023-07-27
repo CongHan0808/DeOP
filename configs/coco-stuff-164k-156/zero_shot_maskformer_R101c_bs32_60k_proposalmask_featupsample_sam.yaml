@@ -6,6 +6,8 @@ MODEL:
   
   WEIGHTS: "detectron2://DeepLab/R-103.pkl"
   # WEIGHTS: "weights/maskfomer/R-103.pkl"
+  WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/prompt/output0128end2end/R101c_decoder_1layer_vit16_featup_delnorm@decoder_query2D_maskvit_noatten_learnprompt__dice08_bce20_layerPre5_learnposition_addcfg_noend2end_lr02_img512_bat32_1/model_final.pth"
+  # WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/weights/maskfomer/R-103.pkl"
   RESNETS:
     DEPTH: 101
     STEM_TYPE: "deeplab"
@@ -18,7 +20,7 @@ MODEL:
     CLIP_ENSEMBLE: True
     CLIP_ENSEMBLE_WEIGHT: 0.8
     # PROMPT_LEARNER: "predefined"
-    PROMPT_CHECKPOINT: "promptproposal/learnprompt_bs32_10k_4/model_clip_learnprompt.pth"
+    PROMPT_CHECKPOINT: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/output/promptproposal/learnprompt_bs32_10k_4/model_final.pth"
   MASK_FORMER:
     SAM_POINTS_PER_SIDE: 20
 OUTPUT_DIR: "prompt/output0817/R101c_learned_prompt_bs32_60k_newdata"
