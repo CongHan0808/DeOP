@@ -107,8 +107,8 @@ We replace MaskFormer with SAM as the mask proposal network.
 
 </details>
 
-Results on COCO-Stuff and Pascal VOC in the open-vocabulary setting.
 ### Results 
+Results on COCO-Stuff and Pascal VOC in the open-vocabulary setting.
 <a name="resdataset"></a>
 ![](resources/results-intradataset.jpg)
 Results on Pascal VOC, Pascal Context and ADE20K in the cross-dataset setting
