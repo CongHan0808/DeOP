@@ -15,6 +15,7 @@ from detectron2.utils.comm import get_local_rank,synchronize
 import clip
 
 from .modeling.criterion_decoder import SetCriterion
+from .modeling.criterion import SetCriterion as SetCriterionSrc
 from .modeling.matcher import HungarianMatcher
 
 # clip image encoder as backbone
@@ -110,6 +111,7 @@ class MaskFormer(nn.Module):
     @classmethod
     def from_config(cls, cfg):
         clipAsBackbone = cfg.MODEL.BACKBONE_CLIP
+        nolyMaskformer = cfg.MODEL.MASK_FORMER.ONLY_MASKFORMER
         print("mask former model: ", clipAsBackbone)
         if cfg.MODEL.BACKBONE_CLIP:
             clip_model_name = cfg.MODEL.CLIP_ADAPTER.CLIP_MODEL_NAME
@@ -120,7 +122,7 @@ class MaskFormer(nn.Module):
         else:
             backbone = build_backbone(cfg)
         sem_seg_head = build_sem_seg_head(cfg, backbone.output_shape())
-
+        # import pdb; pdb.set_trace()
         # Loss parameters:
         deep_supervision = cfg.MODEL.MASK_FORMER.DEEP_SUPERVISION
         no_object_weight = cfg.MODEL.MASK_FORMER.NO_OBJECT_WEIGHT
@@ -134,7 +136,7 @@ class MaskFormer(nn.Module):
         # building criterion
         matcher = HungarianMatcher(
             # cost_class=1,
-            cost_class=0,
+            cost_class=1,
             cost_mask=mask_weight,
             cost_dice=dice_weight,
         )
@@ -148,18 +150,30 @@ class MaskFormer(nn.Module):
                 aux_weight_dict.update({k + f"_{i}": v for k, v in weight_dict.items()})
             weight_dict.update(aux_weight_dict)
 
-        losses = ["labels", "masks"]
-        losses = ["labels"]
+        if nolyMaskformer:
+            losses = ["labels","masks"]
+        else:
+            losses = ["labels"]
         
-
-        criterion = SetCriterion(
-            sem_seg_head.num_classes,
-            matcher=matcher,
-            weight_dict=weight_dict,
-            eos_coef=no_object_weight,
-            losses=losses,
-            num_class = num_class,
-        )
+        # import pdb; pdb.set_trace()
+        if nolyMaskformer:
+            criterion = SetCriterionSrc(
+                sem_seg_head.num_classes,
+                matcher=matcher,
+                weight_dict=weight_dict,
+                eos_coef=no_object_weight,
+                losses=losses,
+                # num_class = num_class,
+            )
+        else:
+            criterion = SetCriterion(
+                sem_seg_head.num_classes,
+                matcher=matcher,
+                weight_dict=weight_dict,
+                eos_coef=no_object_weight,
+                losses=losses,
+                num_class = num_class,
+            )
 
         return {
             # clip image encoder as backbone

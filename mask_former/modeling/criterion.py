@@ -67,7 +67,7 @@ class SetCriterion(nn.Module):
         2) we supervise each pair of matched ground-truth / prediction (supervise class and box)
     """
 
-    def __init__(self, num_classes, matcher, weight_dict, eos_coef, losses, num_class=-1):
+    def __init__(self, num_classes, matcher, weight_dict, eos_coef, losses):
         """Create the criterion.
         Parameters:
             num_classes: number of object categories, omitting the special no-object category
@@ -135,7 +135,7 @@ class SetCriterion(nn.Module):
         targets dicts must contain the key "masks" containing a tensor of dim [nb_target_boxes, h, w]
         """
         assert "pred_masks" in outputs
-        # import pdb; pdb.set_trace()
+
         src_idx = self._get_src_permutation_idx(indices)
         tgt_idx = self._get_tgt_permutation_idx(indices)
         src_masks = outputs["pred_masks"]
@@ -221,7 +221,7 @@ class SetCriterion(nn.Module):
                     l_dict = {k + f"_{i}": v for k, v in l_dict.items()}
                     losses.update(l_dict)
 
-        return losses,indices
+        return losses
 
     def clean_buffer(self):
         self.cur_target = []

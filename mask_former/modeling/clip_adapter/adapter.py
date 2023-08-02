@@ -8,9 +8,9 @@ from .text_prompt import PromptExtractor
 
 
 class ClipAdapter(nn.Module):
-    def __init__(self, clip_model_name: str, prompt_learner: PromptExtractor):
+    def __init__(self, clip_model_name: str, prompt_learner: PromptExtractor, layermaskvit= [11]):
         super().__init__()
-        self.clip_model = build_clip_model(clip_model_name)
+        self.clip_model = build_clip_model(clip_model_name, layermaskvit=layermaskvit)
         self.prompt_learner = prompt_learner
         self.prompt_learner.init_buffer(self.clip_model)
         self.text_feature_buffer = {}
@@ -83,8 +83,9 @@ class MaskFormerClipAdapter(ClipAdapter):
         mask_thr: float = 0.5,
         mask_matting: bool = False,
         region_resized: bool = True,
+        layermaskvit=[],
     ):
-        super().__init__(clip_model_name, prompt_learner)
+        super().__init__(clip_model_name, prompt_learner,layermaskvit)
         self.non_object_embedding = nn.Parameter(
             torch.empty(1, self.clip_model.text_projection.shape[-1])
         )

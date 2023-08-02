@@ -11,8 +11,7 @@ MODEL:
     # for learnable prompt
     PROMPT_DIM: 512
     PROMPT_SHAPE: (16, 0)
-    #CLIP_MODEL_NAME: "ViT-B/16"
-    CLIP_MODEL_NAME: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/weights/clip/ViT-B-16.pt"
+    CLIP_MODEL_NAME: "ViT-B/16"
     MASK_FILL: "mean"
     MASK_EXPAND_RATIO: 1.0
     MASK_THR: 0.5

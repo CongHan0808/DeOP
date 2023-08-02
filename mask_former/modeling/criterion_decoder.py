@@ -184,10 +184,6 @@ class SetCriterion(nn.Module):
                 ).detach()
             else:
                 empty_weight = self.empty_weight
-            # loss_ce = F.cross_entropy(
-            #     src_logits.transpose(1, 2), target_classes, empty_weight
-            # )
-            # import pdb; pdb.set_trace()
             loss_ce = F.cross_entropy(
                 src_output, sem_seg_gt, empty_weight, ignore_index=255
             )
@@ -214,18 +210,14 @@ class SetCriterion(nn.Module):
         )
         # import pdb; pdb.set_trace()
 
-        # 2023-01-23更新
-        # tmp_logits = src_logits.copy()
-        # is_nan_logits = np.isnan(src_logits.cpu()).any()
-        is_nan_logits = np.isnan(src_logits.detach().cpu()).any()
-        # import pdb; pdb.set_trace()
-        if is_nan_logits:
-            import pdb; pdb.set_trace()
-            if  np.array(np.where(np.isnan(src_logits.detach().cpu()))).shape[1]==src_logits.shape[-1]:
-                index_bz = np.unique(np.where(np.isnan(src_logits.detach().cpu()))[0])
-                index_mask = np.unique(np.where(np.isnan(src_logits.detach().cpu()))[1])
-        #     place_holder = 1e-3
-        #     src_logits[np.isnan(src_logits.detach().cpu())] = place_holder
+        # is_nan_logits = np.isnan(src_logits.detach().cpu()).any()
+
+        # if is_nan_logits:
+        #     import pdb; pdb.set_trace()
+        #     if  np.array(np.where(np.isnan(src_logits.detach().cpu()))).shape[1]==src_logits.shape[-1]:
+        #         index_bz = np.unique(np.where(np.isnan(src_logits.detach().cpu()))[0])
+        #         index_mask = np.unique(np.where(np.isnan(src_logits.detach().cpu()))[1])
+
 
         src_logits = F.softmax(src_logits, dim = -1)
         src_masks_upsample = src_masks_upsample.sigmoid()
@@ -234,8 +226,6 @@ class SetCriterion(nn.Module):
         
         src_output = F.sigmoid(src_output*output_sig-output_sig)
 
-        # import pdb;pdb.set_trace()
-        
         if self.use_ignore_idx:
             loss_ce = F.cross_entropy(
                 src_logits.transpose(1, 2),
@@ -249,19 +239,9 @@ class SetCriterion(nn.Module):
                 ).detach()
             else:
                 empty_weight = self.empty_weight
-            # loss_ce = F.cross_entropy(
-            #     src_logits.transpose(1, 2), target_classes, empty_weight
-            # )
-            # import pdb; pdb.set_trace()
-            # loss_ce = F.cross_entropy(
-            #     src_output, sem_seg_gt, empty_weight, ignore_index=255
-            # )
             loss_ce = bce_loss_ignore(src_output, sem_seg_gt, ignore_index=255)
             loss_dice = dice_loss_ignore(src_output, sem_seg_gt, ignore_index=255, num_class = self.num_class)
-            # loss_dice = F.cross_entropy(
-            #     src_output, sem_seg_gt, empty_weight, ignore_index=255
-            # )
-        # import pdb; pdb.set_trace()
+
         losses = {"loss_ce": loss_ce, "loss_decoder_dice":loss_dice}
         return losses
 

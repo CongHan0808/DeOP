@@ -131,9 +131,10 @@ sh deop_verifycoco.sh
 ### Train
 ```
 # 1.Train a learnable text prompt model.
+python train_net.py --config-file configs/coco-stuff-164k-156/zero_shot_proposal_classification_learn_prompt_bs32_10k.yaml --num-gpus 8 
 
 # 2. Train a MaskFormer model.
-
+python train_net.py --config-file configs/coco-stuff-164k-156/zero_shot_maskformer_R101c_bs32_60k.yaml --num-gpus 8 MODEL.CLIP_ADAPTER.PROMPT_CHECKPOINT ${TRAINED_PROMPTS}
 # 3. Train DeOP.
 sh deop_train.sh
 ```

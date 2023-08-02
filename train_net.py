@@ -70,40 +70,6 @@ class Trainer(DefaultTrainer):
     Extension of the Trainer class adapted to DETR.
     """
 
-    # def __init__(self, cfg):
-    #     """
-    #     Args:
-    #         cfg (CfgNode):
-    #     """
-    #     super(DefaultTrainer,self).__init__()
-    #     logger = logging.getLogger("detectron2")
-    #     if not logger.isEnabledFor(logging.INFO):  # setup_logger is not called for d2
-    #         setup_logger()
-    #     cfg = DefaultTrainer.auto_scale_workers(cfg, comm.get_world_size())
-
-    #     # Assume these objects must be constructed in this order.
-    #     model = self.build_model(cfg)
-    #     optimizer = self.build_optimizer(cfg, model)
-    #     data_loader = self.build_train_loader(cfg)
-
-    #     model = create_ddp_model(model, broadcast_buffers=False)
-    #     self._trainer = (AMPTrainer if cfg.SOLVER.AMP.ENABLED else SimpleTrainer)(
-    #         model, data_loader, optimizer
-    #     )
-
-    #     self.scheduler = self.build_lr_scheduler(cfg, optimizer)
-    #     self.checkpointer = DetectionCheckpointer(
-    #         # Assume you want to save checkpoints together with logs/statistics
-    #         model,
-    #         cfg.OUTPUT_DIR,
-    #         trainer=weakref.proxy(self),
-    #     )
-    #     self.start_iter = 0
-    #     self.max_iter = cfg.SOLVER.MAX_ITER
-    #     self.cfg = cfg
-
-    #     self.register_hooks(self.build_hooks())
-
     @classmethod
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
         """
@@ -201,63 +167,6 @@ class Trainer(DefaultTrainer):
         else:
             mapper = None
         return build_detection_test_loader(cfg, dataset_name, mapper=mapper)
-
-    # @classmethod
-    # def test(cls, cfg, model, evaluators=None):
-    #     """
-    #     Evaluate the given model. The given model is expected to already contain
-    #     weights to evaluate.
-
-    #     Args:
-    #         cfg (CfgNode):
-    #         model (nn.Module):
-    #         evaluators (list[DatasetEvaluator] or None): if None, will call
-    #             :meth:`build_evaluator`. Otherwise, must have the same length as
-    #             ``cfg.DATASETS.TEST``.
-
-    #     Returns:
-    #         dict: a dict of result metrics
-    #     """
-    #     logger = logging.getLogger(__name__)
-    #     if isinstance(evaluators, DatasetEvaluator):
-    #         evaluators = [evaluators]
-    #     if evaluators is not None:
-    #         assert len(cfg.DATASETS.TEST) == len(evaluators), "{} != {}".format(
-    #             len(cfg.DATASETS.TEST), len(evaluators)
-    #         )
-    #     num_imgs = 0
-    #     results = OrderedDict()
-    #     # import pdb; pdb.set_trace()
-    #     for idx, dataset_name in enumerate(cfg.DATASETS.TEST):
-    #         data_loader = cls.build_test_loader(cfg, dataset_name)
-    #         # When evaluators are passed in as arguments,
-    #         # implicitly assume that evaluators can be created before data_loader.
-    #         if evaluators is not None:
-    #             evaluator = evaluators[idx]
-    #         else:
-    #             try:
-    #                 evaluator = cls.build_evaluator(cfg, dataset_name)
-    #             except NotImplementedError:
-    #                 logger.warn(
-    #                     "No evaluator found. Use `DefaultTrainer.test(evaluators=)`, "
-    #                     "or implement its `build_evaluator` method."
-    #                 )
-    #                 results[dataset_name] = {}
-    #                 continue
-    #         results_i = inference_on_dataset(model, data_loader, evaluator)
-    #         results[dataset_name] = results_i
-    #         if comm.is_main_process():
-    #             assert isinstance(
-    #                 results_i, dict
-    #             ), "Evaluator must return a dict on the main process. Got {} instead.".format(
-    #                 results_i
-    #             )
-    #             logger.info("Evaluation results for {} in csv format:".format(dataset_name))
-    #             print_csv_format(results_i)
-
-    #     if len(results) == 1:
-    #         results = list(results.values())[0]
-    #     return results
 
     def build_writers(self):
         """
@@ -450,7 +359,7 @@ class Trainer(DefaultTrainer):
         #         print(name)
             # if param.requires_grad:
             #     print("grad "+name)
-
+        # import pdb; pdb.set_trace()
         self._trainer._write_metrics(loss_dict, data_time)
 
         """
@@ -472,9 +381,6 @@ def setup(args):
     cfg.merge_from_list(args.opts)
     cfg.freeze()
     default_setup(cfg, args)
-    # Setup logger for "mask_former" module
-    # if not args.eval_only:
-    #     setup_wandb(cfg, args)
     setup_logger(
         output=cfg.OUTPUT_DIR, distributed_rank=comm.get_rank(), name="mask_former"
     )
@@ -485,11 +391,9 @@ def main(args):
     cfg = setup(args)
     if args.eval_only:
         model = Trainer.build_model(cfg)
-        # import pdb; pdb.set_trace()
         DetectionCheckpointer(model, save_dir=cfg.OUTPUT_DIR).resume_or_load(
             cfg.MODEL.WEIGHTS, resume=args.resume
         )
-        # import pdb; pdb.set_trace()
 
         if cfg.TEST.AUG.ENABLED:
             res = Trainer.test_with_TTA(cfg, model)

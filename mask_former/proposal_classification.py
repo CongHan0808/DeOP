@@ -65,8 +65,10 @@ class ProposalClipClassifier(nn.Module):
                     cfg.MODEL.CLIP_ADAPTER.PROMPT_LEARNER
                 )
             )
+        layermaskvit = cfg.MODEL.CLIP_ADAPTER.LAYERMASKVIT
         clip_adapter = ClipAdapter(
-            cfg.MODEL.CLIP_ADAPTER.CLIP_MODEL_NAME, prompt_learner
+            cfg.MODEL.CLIP_ADAPTER.CLIP_MODEL_NAME, prompt_learner,
+            layermaskvit = layermaskvit
         )
         return {
             "clip_adapter": clip_adapter,

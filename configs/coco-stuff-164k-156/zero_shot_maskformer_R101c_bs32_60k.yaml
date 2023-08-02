@@ -2,10 +2,8 @@ _BASE_: zero_shot_maskformer_R50_bs32_60k.yaml
 MODEL:
   BACKBONE:
     NAME: "build_resnet_deeplab_backbone"
-  #WEIGHTS: "detectron2://DeepLab/R-103.pkl"
-  WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/weights/maskfomer/R-103.pkl"
-  #WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/prompt/output/R101c_learned_prompt_bs32_60k_Noid-1/model_final.pth"
-  #WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/prompt/output/R101c_single_prompt_bs32_60k/model_final_learned.pth"
+  WEIGHTS: "detectron2://DeepLab/R-103.pkl"
+  
   RESNETS:
     DEPTH: 101
     STEM_TYPE: "deeplab"
@@ -18,7 +16,7 @@ MODEL:
     CLIP_ENSEMBLE: True
     CLIP_ENSEMBLE_WEIGHT: 0.8
   
-OUTPUT_DIR: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/prompt/output0817/R101c_learned_prompt_bs32_60k_newdata"
+OUTPUT_DIR: "deop/maskproposalmodel"
 DATASETS:
   #TRAIN: ("coco_2017_train_stuff_base_sem_seg",)
   TEST: ("coco_2017_test_stuff_base_sem_seg", "coco_2017_test_stuff_novel_sem_seg", "coco_2017_test_stuff_sem_seg")

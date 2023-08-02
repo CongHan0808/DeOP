@@ -1888,7 +1888,7 @@ class MultiheadAttentionVit(nn.Module):
                 vitL = False) -> Tuple[Tensor, Optional[Tensor]]:
         # import pdb; pdb.set_trace()
         if self.maskselfattn and not maskselfattnsoftmax:
-            
+            # GPS
             return multi_head_attention_forward_vit_softmax_noattn_maskselfattn_addselfattn(        
                 query, key, value, self.embed_dim, self.num_heads,
                 self.in_proj_weight, self.in_proj_bias,
@@ -1899,6 +1899,7 @@ class MultiheadAttentionVit(nn.Module):
                 attn_mask=attn_mask, mask_feature = mask_feature, maskselfattnsoftmax=maskselfattnsoftmax,
                 layerVit = self.layerVit)
         if self.maskselfattn:
+            #MPS
             return multi_head_attention_forward_vit_softmax_noattn_maskselfattn(        
                 query, key, value, self.embed_dim, self.num_heads,
                 self.in_proj_weight, self.in_proj_bias,
@@ -1917,6 +1918,7 @@ class MultiheadAttentionVit(nn.Module):
                 key_padding_mask=key_padding_mask, need_weights=need_weights,
                 attn_mask=attn_mask, mask_feature = mask_feature)
         else:
+            # GPS with mask, get better results
             return multi_head_attention_forward_vit_softmax_noattn(
                 query, key, value, self.embed_dim, self.num_heads,
                 self.in_proj_weight, self.in_proj_bias,
@@ -2494,7 +2496,7 @@ def multi_head_attention_forward_vit_softmax_noattn(
     else:
         return attn_output, None
 
-# mask直接作用于value上，没有k,v计算attention，Mask-based attention
+# mask-guided patch severance attention
 def multi_head_attention_forward_vit_softmax_noattn_maskselfattn(
     query: Tensor,
     key: Tensor,
@@ -2613,7 +2615,7 @@ def multi_head_attention_forward_vit_softmax_noattn_maskselfattn(
     else:
         return attn_output, None
 
-# mask直接作用于value上，没有k,v计算attention
+# generalized patch severance.
 def multi_head_attention_forward_vit_softmax_noattn_maskselfattn_addselfattn(
     query: Tensor,
     key: Tensor,
@@ -2661,12 +2663,9 @@ def multi_head_attention_forward_vit_softmax_noattn_maskselfattn_addselfattn(
     if v is not None:
         v = v.contiguous().view(-1, bsz * num_heads, head_dim).transpose(0, 1)
     
-    
-    
     bias_attn_1= torch.eye(tgt_len, tgt_len).to(v)
     bias_attn = bias_attn_1.unsqueeze(0).repeat([bsz*num_heads,1,1])
 
-    
     alpha = 0
     beta = 1.0 - alpha
     alpha_MSA = 1.0
@@ -2680,14 +2679,11 @@ def multi_head_attention_forward_vit_softmax_noattn_maskselfattn_addselfattn(
     
     # attn_output_weights = attn_output_weights_qk * alpha + bias_attn * beta
     attn_output_weights =  bias_attn
-    
-        
+         
     len_tokens=0
     
-
     attn_output=torch.bmm(attn_output_weights, v)
     
-
     assert list(attn_output.size()) == [bsz * num_heads, tgt_len-len_tokens, head_dim]
     
     attn_output = attn_output.transpose(0, 1).contiguous().view(tgt_len-len_tokens, bsz, embed_dim)

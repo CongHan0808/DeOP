@@ -86,6 +86,8 @@ def add_mask_former_default_config(cfg):
     cfg.MODEL.MASK_FORMER.TRANSFORMER_IN_FEATURE = "res5"
     cfg.MODEL.MASK_FORMER.ENFORCE_INPUT_PROJ = False
 
+    cfg.MODEL.MASK_FORMER.ONLY_MASKFORMER = False
+
     # mask_former inference config
     cfg.MODEL.MASK_FORMER.TEST = CN()
     cfg.MODEL.MASK_FORMER.TEST.PANOPTIC_ON = False

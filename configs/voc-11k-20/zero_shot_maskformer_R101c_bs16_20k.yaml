@@ -2,8 +2,8 @@ _BASE_: ../coco-stuff-164k-156/zero_shot_maskformer_R50_bs32_60k.yaml
 MODEL:
   BACKBONE:
     NAME: "build_resnet_deeplab_backbone"
-  #WEIGHTS: "detectron2://DeepLab/R-103.pkl"
-  WEIGHTS: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/weights/maskfomer/R-103.pkl"
+  WEIGHTS: "detectron2://DeepLab/R-103.pkl"
+  
   RESNETS:
     DEPTH: 101
     STEM_TYPE: "deeplab"
@@ -20,8 +20,8 @@ MODEL:
     # for learnable prompt
     PROMPT_DIM: 512
     PROMPT_SHAPE: (16, 0)
-    #CLIP_MODEL_NAME: "ViT-B/16"
-    CLIP_MODEL_NAME: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/weights/clip/ViT-B-16.pt"
+    CLIP_MODEL_NAME: "ViT-B/16"
+    
     MASK_FILL: "mean"
     MASK_EXPAND_RATIO: 1.0
     MASK_THR: 0.5
@@ -53,4 +53,4 @@ TEST:
     MIN_SIZES: [256, 384, 512, 640, 768, 896]
     MAX_SIZE: 3584
     FLIP: True
-OUTPUT_DIR: "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/prompt/outputVOC/R101c_single_prompt_bs16_20k_seen15"
+OUTPUT_DIR: "outputVOC/R101c_single_prompt_bs16_20k_seen15"
