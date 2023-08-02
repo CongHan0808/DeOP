@@ -12,6 +12,6 @@ def compare_modelweights(w1, w2):
 
 if __name__=="__main__":
     w1 = "rerun.pth"
-    w2 = "/mnt/dolphinfs/hdd_pool/docker/user/hadoop-vacv/hancong/code/pretrain/ov-seg/zsseg.baseline/prompt/output0128end2end/R101c_decoder_1layer_vit16_featup_delnorm@decoder_query2D_maskvit_noatten_learnprompt__dice08_bce20_layerPre5_learnposition_addcfg_noend2end_lr02_img512_bat32_1/model_final.pth"
+    w2 = "cprompt/output0128end2end/R101c_decoder_1layer_vit16_featup_delnorm@decoder_query2D_maskvit_noatten_learnprompt__dice08_bce20_layerPre5_learnposition_addcfg_noend2end_lr02_img512_bat32_1/model_final.pth"
     compare_modelweights(w1, w2)
     pass
