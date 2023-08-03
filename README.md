@@ -18,23 +18,20 @@
    python -m pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu102/torch1.8/index.html
    ``` -->
 
+# [ICCV2023] Open Vocabulary Semantic Segmentation with Decoupled One-Pass Network
 
-
-This repo is for our paper [Zero-Shot Semantic Segmentation with Decoupled One-Pass Network](https://arxiv.org/pdf/2304.01198.pdf). It is based on the official repo of [SimBaseline](https://github.com/MendelXu/zsseg.baseline).
+This repo is for our paper [Open Vocabulary Semantic Segmentation with Decoupled One-Pass Network](https://arxiv.org/pdf/2304.01198.pdf). It is based on the official repo of [SimBaseline](https://github.com/MendelXu/zsseg.baseline).
 We replace MaskFormer with SAM as the mask proposal network.
 
 ![](resources/deop.png)
 <!-- <iframe src="resources/framework6.pdf" width="500" height="375"></iframe> -->
 
-```
-@article{Han2023ZeroShotSS,
-  title={Zero-Shot Semantic Segmentation with Decoupled One-Pass Network},
-  author={Cong Han and Yujie Zhong and Dengjie Li and Kai Han and Lin Ma},
-  journal={ICCV},
-  year={2023},
-  volume={abs/2304.01198}
-}
-```
+### Results 
+Results on COCO-Stuff and Pascal VOC in the open-vocabulary setting.
+<a name="resdataset"></a>
+![](resources/results-intradataset.jpg)
+Results on Pascal VOC, Pascal Context and ADE20K in the cross-dataset setting
+![](resources/results-crossdataset.jpg)
 
 ## Guideline
 ### Setup environment
@@ -107,12 +104,7 @@ We replace MaskFormer with SAM as the mask proposal network.
 
 </details>
 
-### Results 
-Results on COCO-Stuff and Pascal VOC in the open-vocabulary setting.
-<a name="resdataset"></a>
-![](resources/results-intradataset.jpg)
-Results on Pascal VOC, Pascal Context and ADE20K in the cross-dataset setting
-![](resources/results-crossdataset.jpg)
+
 ### Run demo
   The demo is almost training-free, we only train the learnable text prompt. You can download the weights from [text prompt](https://drive.google.com/file/d/1b6kzLks12ONQPT6wVJsM8ZLrd_GB0br8/view?usp=drive_link) which is trained on COCO-Stuff-156 dataset.
   ```
@@ -137,4 +129,17 @@ python train_net.py --config-file configs/coco-stuff-164k-156/zero_shot_proposal
 python train_net.py --config-file configs/coco-stuff-164k-156/zero_shot_maskformer_R101c_bs32_60k.yaml --num-gpus 8 MODEL.CLIP_ADAPTER.PROMPT_CHECKPOINT ${TRAINED_PROMPTS}
 # 3. Train DeOP.
 sh deop_train.sh
+```
+
+### Cite
+If you find this project useful for your research, please consider citing the following BibTeX entry.
+```
+@article{Han2023ZeroShotSS,
+  title={Zero-Shot Semantic Segmentation with Decoupled One-Pass Network},
+  author={Cong Han and Yujie Zhong and Dengjie Li and Kai Han and Lin Ma},
+  journal={ArXiv},
+  year={2023},
+  volume={abs/2304.01198},
+  url={https://api.semanticscholar.org/CorpusID:257913359}
+}
 ```
