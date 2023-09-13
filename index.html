@@ -37,20 +37,20 @@
 <body>
 <div class="container">
     <div class="title">
-        Creative and Descriptive Paper Title
+        Open-Vocabulary Semantic Segmentation with Decoupled One-Pass Network
     </div>
 
     <div class="venue">
-        In Conference 20XX
+        In ICCV, 2023
     </div>
 
     <br><br>
 
     <div class="author">
-        <a>Cong Han</a><sup>1</sup>
+        <a href="">Cong Han</a><sup>1</sup>
     </div>
     <div class="author">
-        <a href="">Yujie Zhong</a><sup>1</sup>
+        <a href="https://y-zhong.info/">Yujie Zhong</a><sup>1</sup>
     </div>
     <div class="author">
         <a href="">Dengjie Li</a><sup>1</sup>
@@ -64,76 +64,87 @@
 
     <br><br>
 
-    <div class="Meituan Inc."><sup>1&nbsp;</sup>Affiliation Number One</div>
-    <div class="The University of Hong Kong"><sup>2&nbsp;</sup>Affiliation Number Two</div>
+    <div class="affiliation"><sup>1&nbsp;</sup>Meituan Inc.</div>
+    <div class="affiliation"><sup>2&nbsp;</sup>The University of Hong Kong</div>
+    <!-- <div class="affiliation"><sup>3&nbsp;</sup>Affiliation Number Three</div>
+    <div class="affiliation"><sup>4&nbsp;</sup>Affiliation Number Four</div> -->
 
     <br><br>
 
-    <div class="links"><a href="https://arxiv.org/pdf/2304.01198">[Paper]</a></div>
+    <div class="links"><a href="https://arxiv.org/abs/2304.01198">[Paper]</a></div>
     <!-- <div class="links"><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">[Video]</a></div> -->
     <div class="links"><a href="https://github.com/CongHan0808/DeOP">[Code]</a></div>
 
     <br><br>
 
-    <img style="width: 80%;" src="./resources/teaser.jpg" alt="Teaser figure."/>
+    <img style="width: 80%;" src="./resources/sem_seg_new.jpg" alt="Teaser figure."/>
+    <!-- <embed style="width: 80%;" src="./resources/sem_seg_new.pdf" alt="Teaser figure."/> -->
     <br>
-    <p style="width: 80%;">
+    <!-- <p style="width: 80%;">
         This template was originally made by <a href="http://web.mit.edu/phillipi/">Phillip Isola</a> and <a href="http://richzhang.github.io/">Richard Zhang</a> for a <a href="http://richzhang.github.io/colorization/">colorful project</a>, and inherits the modifications made by <a href="https://github.com/jasonyzhang/webpage-template">Jason Zhang</a>.
         The code can be found <a href="https://github.com/elliottwu/webpage-template">here</a>.
-    </p>
+    </p> -->
 
     <br><br>
     <hr>
 
     <h1>Abstract</h1>
     <p style="width: 80%;">
-        This is my abstract.
+        Recently, the open-vocabulary semantic segmentation problem has attracted increasing attention and the best performing methods are based on two-stream networks: one stream for proposal mask generation and the other for segment classification using a pre-trained visual-language model. However, existing two-stream methods require passing a great number of (up to a hundred) image crops into
+the visual-language model, which is highly inefficient. To address the problem, we propose a network that only needs a single pass through the visual-language model for each input image. Specifically, we first propose a novel network adaptation approach, termed patch severance, to restrict the harmful interference between the patch embeddings in the pre-trained visual encoder. We then propose classification anchor learning to encourage the network to spatially
+focus on more discriminative features for classification. Extensive experiments demonstrate that the proposed method achieves outstanding performance, surpassing state-of-theart methods while being 4 to 7 times faster at inference.
     </p>
 
-    <br><br>
-    <hr>
+    <!-- <br><br>
+    <hr> -->
 
-    <h1>Video</h1>
+    <!-- <h1>Video</h1>
     <div class="video-container">
         <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameBorder="0"
                 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen></iframe>
-    </div>
+    </div> -->
 
     <br><br>
     <hr>
 
     <h1>Method Overview</h1>
-    <img style="width: 80%;" src="./resources/method.jpg"
+    <img style="width: 80%;" src="./resources/deop.jpg"
          alt="Method overview figure"/>
-    <br>
-    <a class="links" href="https://github.com/elliottwu/webpage-template">[Code]</a>
+    <!-- <br> -->
+    <!-- <a class="links" href="https://github.com/elliottwu/webpage-template">[Code]</a> -->
 
-    <br><br>
+    <!-- <br><br> -->
     <hr>
 
     <h1>Results</h1>
-    <img style="width: 80%;" src="./resources/results.jpg"
+    <img style="width: 80%;" src="./resources/result1.jpg"
          alt="Results figure"/>
-
+    <img style="width: 80%;" src="./resources/result2.jpg"
+    alt="Results figure"/>
     <br><br>
+
     <hr>
 
     <h1>Paper</h1>
     <div class="paper-thumbnail">
         <a href="https://arxiv.org">
-            <img class="layered-paper-big" width="100%" src="./resources/paper.jpg" alt="Paper thumbnail"/>
+            <img class="layered-paper-big" width="100%" src="./resources/firstpage.jpg" alt="Paper thumbnail"/>
         </a>
     </div>
     <div class="paper-info">
-        <h3>Creative and Descriptive Paper Title</h3>
-        <p>First Author, Second Author, Third Author, Fourth Author, and Fifth Author</p>
-        <p>In Conference, 20XX.</p>
-        <pre><code>@InProceedings{author20XXtitle,
-    title = {Creative and Descriptive Paper Title},
-    author = {Author, First and Author, Second and Author, Third and Author, Fourth and Author, Fifth},
-    booktitle = {Conference},
-    year = {20XX},
+        <h3>Open-Vocabulary Semantic Segmentation with Decoupled One-Pass Network</h3>
+        <p>Cong Han, Yujie Zhong, Dengjie Li, Kai Han, and Lin Ma</p>
+        <p>In ICCV, 2023.</p>
+        <pre><code>@article{Han2023ZeroShotSS,
+    title = {Open-Vocabulary Semantic Segmentation with Decoupled One-Pass Network},
+    author = {Cong Han, Yujie Zhong, Dengjie Li, Kai Han, and Lin Ma},
+    journal={ArXiv},
+    year={2023},
+    volume={abs/2304.01198},
+    url={https://api.semanticscholar.org/CorpusID:257913359}
+    <!-- booktitle = {Conference},
+    year = {20XX}, -->
 }</code></pre>
     </div>
 
@@ -142,8 +153,8 @@
 
     <h1>Acknowledgements</h1>
     <p style="width: 80%;">
-        This template was originally made by <a href="http://web.mit.edu/phillipi/">Phillip Isola</a> and <a href="http://richzhang.github.io/">Richard Zhang</a> for a <a href="http://richzhang.github.io/colorization/">colorful project</a>, and inherits the modifications made by <a href="https://github.com/jasonyzhang/webpage-template">Jason Zhang</a>.
-        The code can be found <a href="https://github.com/elliottwu/webpage-template">here</a>.
+        This work is supported by National Key R&D Program of China (No. 2022ZD0118700),
+        Hong Kong Research Grant Council - Early Career Scheme (Grant No. 27208022), and HKU Seed Fund for Basic Research.
     </p>
 
     <br><br>
