@@ -20,8 +20,7 @@
 
 # [ICCV2023] Open Vocabulary Semantic Segmentation with Decoupled One-Pass Network
 
-This repo is for our paper [Open Vocabulary Semantic Segmentation with Decoupled One-Pass Network](https://arxiv.org/pdf/2304.01198.pdf). It is based on the official repo of [SimBaseline](https://github.com/MendelXu/zsseg.baseline).
-We replace MaskFormer with SAM as the mask proposal network.
+This repo is for our paper [Open Vocabulary Semantic Segmentation with Decoupled One-Pass Network](https://arxiv.org/pdf/2304.01198.pdf). It is based on the official repo of [SimBaseline](https://github.com/MendelXu/zsseg.baseline). The project page is [Project Page](https://conghan0808.github.io/DeOP/).
 
 ![](resources/deop.png)
 <!-- <iframe src="resources/framework6.pdf" width="500" height="375"></iframe> -->
@@ -134,12 +133,10 @@ sh deop_train.sh
 ### Cite
 If you find this project useful for your research, please consider citing the following BibTeX entry.
 ```
-@article{Han2023ZeroShotSS,
+@proceedings{Han2023ZeroShotSS,
   title={Zero-Shot Semantic Segmentation with Decoupled One-Pass Network},
   author={Cong Han and Yujie Zhong and Dengjie Li and Kai Han and Lin Ma},
-  journal={ArXiv},
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
   year={2023},
-  volume={abs/2304.01198},
-  url={https://api.semanticscholar.org/CorpusID:257913359}
 }
 ```
